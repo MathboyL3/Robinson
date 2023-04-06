@@ -5,17 +5,15 @@ namespace MyLib.JSONFile
     public class JSON
     {
         static JsonSerializerOptions default_option = new JsonSerializerOptions { WriteIndented = true };
-        public static bool Save<T>(T object_to_save, string directory, string file_name)
+        public static bool Save(object object_to_save, string directory, string file_name)
         {
             try
             {
-                if(!Directory.Exists(directory))
-                    Directory.CreateDirectory(directory);
+                Directory.CreateDirectory(directory);
 
                 string file_path = $"{directory}\\{file_name}.json";
                 string json_string = JsonSerializer.Serialize(object_to_save, default_option);
-                using StreamWriter sw = new StreamWriter(file_path);
-                sw.WriteLine(json_string);
+                File.WriteAllText(file_path, json_string);
                 return true;
             }
             catch(Exception ex)
@@ -24,6 +22,16 @@ namespace MyLib.JSONFile
                 Console.WriteLine(ex.ToString());
                 return false;
             }
+        }
+
+        public static string ConvertoToJson(object obj_to_convert)
+        {
+            return JsonSerializer.Serialize(obj_to_convert, default_option);
+        }
+
+        public static T ConvertoFromJson<T>(string obj_to_convert)
+        {
+            return JsonSerializer.Deserialize<T>(obj_to_convert, default_option);
         }
 
         public static T Load<T>(string full_path) {
